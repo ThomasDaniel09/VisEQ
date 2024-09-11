@@ -1,26 +1,8 @@
-use std::{mem::Discriminant, ptr::eq, thread::sleep};
+use crate::lib::*;
 
-pub struct Point {
-  pub x: f64,
-  pub y: f64,
-}
 pub struct LinearSlopeInterceptForm { // y = mx + b
   pub m: f64,
   pub b: f64,
-}
-pub struct QuadraticStandardForm { //y = ax^2 + bx + c
-  pub a: f64,
-  pub b: f64,
-  pub c: f64,
-}
-impl Point {
-  pub fn logSelf(&self) -> () {
-    print!("(");
-    print!("{}", self.x);
-    print!(", ");
-    print!("{}", self.y);
-    println!(")");
-  }
 }
 
 impl LinearSlopeInterceptForm {
@@ -122,31 +104,3 @@ pub fn findIntersection(eq_one: &LinearSlopeInterceptForm, eq_two:&LinearSlopeIn
     }
   }
 }
-
-//QUADRADICS
-
-impl QuadraticStandardForm {
-  pub fn logSelf(&self) {
-    print!("y = ");
-    print!("{}", self.a);
-    print!("x^2 + ");
-    print!("{}", self.b);
-    print!("x + ");
-    print!("{}", self.c);
-    println!("");
-  }
-  pub fn evaluate(&self, xval:f64) -> f64 {
-    return self.a*xval*xval + self.b*xval + self.c;
-  }
-  pub fn numberOfRealRoots(&self) -> usize {
-    let discriminant:f64 = self.b*self.b - (4.0*self.a*self.c);
-    if discriminant > 0.0 {
-      return 2;
-    } else if discriminant == 0.0 {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-}
-

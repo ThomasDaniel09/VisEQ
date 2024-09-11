@@ -1,6 +1,11 @@
-mod types;
+mod lib;
+mod linear;
+mod quadratic;
 
-use crate::types::*;
+use crate::lib::*;
+use crate::linear::*;
+use crate::quadratic::*;
+
 fn main() {
     let testeq:LinearSlopeInterceptForm = LinearSlopeInterceptForm {
         m: 2.0,
@@ -11,11 +16,14 @@ fn main() {
         b: 3.0,
     };
     let testQuadratic:QuadraticStandardForm = QuadraticStandardForm {
-        a: 1.0,
-        b: -4.0,
-        c: 8.0,
+        a: -3.0,
+        b: -6.0,
+        c: -9.0,
     };
-    testQuadratic.logSelf();
-    println!("{}", testQuadratic.evaluate(0.0));
-    println!("{}", testQuadratic.numberOfRealRoots());
+    let testQuadraticVertex:QuadraticVertexForm = QuadraticVertexForm {
+        a: -2.0,
+        b: 2.0,
+        c: 12.0,
+    };
+    StandardToVertex(testQuadratic).logSelf();
 }
