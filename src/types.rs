@@ -1,4 +1,4 @@
-use std::ptr::eq;
+use std::{mem::Discriminant, ptr::eq, thread::sleep};
 
 pub struct Point {
   pub x: f64,
@@ -8,7 +8,7 @@ pub struct LinearSlopeInterceptForm { // y = mx + b
   pub m: f64,
   pub b: f64,
 }
-pub struct QuadradicStandardForm { //y = ax^2 + bx + c
+pub struct QuadraticStandardForm { //y = ax^2 + bx + c
   pub a: f64,
   pub b: f64,
   pub c: f64,
@@ -22,8 +22,6 @@ impl Point {
     println!(")");
   }
 }
-
-
 
 impl LinearSlopeInterceptForm {
   pub fn xIntercept(&self) -> Point {
@@ -59,6 +57,12 @@ impl LinearSlopeInterceptForm {
     }
     return points;
   }
+  pub fn logSelf(&self) {
+    print!("y = ");
+    print!("{}", self.m);
+    print!("x + ");
+    println!("{}", self.b);
+  }
 }
 
 
@@ -82,23 +86,67 @@ if eq_one.m == eq_two.m { //They are parallel or indistinct.
 }
 }
 
-pub fn findIntersection(eq_one: &LinearSlopeInterceptForm, eq_two:&LinearSlopeInterceptForm) -> Point { // test more, not sure this really works
+pub fn findIntersection(eq_one: &LinearSlopeInterceptForm, eq_two:&LinearSlopeInterceptForm) -> Point {
   if eq_one.b == eq_two.b {
     return Point {
       x: 0.0,
       y: 0.0,
     }
-  } else {
-    let equalityCoeffecient:f64 = eq_one.m / eq_two.m; //Potential divide by zero
+  } else if eq_one.m != 0.0 && eq_two.b != 0.0 {
+    let equalityCoeffecient:f64 = eq_one.m / eq_two.m;
     let eq_two_modified:LinearSlopeInterceptForm = LinearSlopeInterceptForm {
-      m: eq_two.m *-1.0 * equalityCoeffecient,
-      b: eq_two.b *-1.0 * equalityCoeffecient,
+      m: eq_two.m * equalityCoeffecient,
+      b: eq_two.b * equalityCoeffecient,
     };
-    let solved_y:f64 = eq_one.b + eq_two_modified.b;
+    let solved_y:f64 = eq_two_modified.b - eq_one.b;
     let solved_x:f64 = eq_one.solveForXValue(solved_y).x;
     return Point{
       x: solved_x,
       y: solved_y,
     }
+    } else { // One of the slopes is equal to zero
+      if eq_one.m == 0.0 {
+        let solved_y:f64 = eq_one.b;
+        let solved_x:f64 = eq_two.solveForXValue(solved_y).x;
+        return Point {
+          x: solved_x,
+          y: solved_y,
+        } 
+      } else {
+        let solved_y:f64 = eq_two.b;
+        let solved_x:f64 = eq_one.solveForXValue(solved_y).x;
+        return Point {
+          x: solved_x,
+          y: solved_y,
+      }
+    }
   }
 }
+
+//QUADRADICS
+
+impl QuadraticStandardForm {
+  pub fn logSelf(&self) {
+    print!("y = ");
+    print!("{}", self.a);
+    print!("x^2 + ");
+    print!("{}", self.b);
+    print!("x + ");
+    print!("{}", self.c);
+    println!("");
+  }
+  pub fn evaluate(&self, xval:f64) -> f64 {
+    return self.a*xval*xval + self.b*xval + self.c;
+  }
+  pub fn numberOfRealRoots(&self) -> usize {
+    let discriminant:f64 = self.b*self.b - (4.0*self.a*self.c);
+    if discriminant > 0.0 {
+      return 2;
+    } else if discriminant == 0.0 {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}
+
