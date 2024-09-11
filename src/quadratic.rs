@@ -11,11 +11,12 @@ pub struct QuadraticVertexForm { //y = a(x-b)^2 + c
   pub c: f64,
 }
 
-pub fn StandardToVertex(StandardForm:QuadraticStandardForm) -> QuadraticVertexForm {
+pub fn StandardToVertex(StandardForm:&QuadraticStandardForm) -> QuadraticVertexForm {
+  let b:f64 = (-1.0 * StandardForm.b) / StandardForm.a / 2.0;
   return QuadraticVertexForm {
     a: StandardForm.a,
-    b: (-1.0 * StandardForm.b) / StandardForm.a / 2.0,
-    c: StandardForm.c - (StandardForm.b / StandardForm.a / 2.0) * (StandardForm.b / StandardForm.a / 2.0),
+    b: b,
+    c: StandardForm.a*b*b + StandardForm.b*b + StandardForm.c,
   }
 }
 
@@ -31,6 +32,12 @@ impl QuadraticVertexForm {
   }
   pub fn evaluate(&self, val:f64) -> f64 {
     return self.a * (val - self.b)*(val - self.b) + self.c;
+  }
+  pub fn findVertex(&self) -> Point {
+    return Point {
+      x: self.b,
+      y: self.c,
+    };
   }
 }
 
@@ -58,8 +65,29 @@ impl QuadraticStandardForm {
       return 0;
     }
   }
-  /*pub fn findVertex(&self) -> Point {
-    
-  }*/
+  pub fn findVertex(&self) -> Point {
+    return StandardToVertex(self).findVertex();  
+  }
+  pub fn findRoots(&self) -> Vec<Point> {
+    if self.a == 0.0 { panic!(); } else {
+      let under_root:f64 = self.b *self.b - (4.0 * self.a * self.c);
+      if under_root < 0.0 {panic!();} else {
+        let x1:f64 = ((-1.0 * self.b) + under_root)/(2.0*self.a);
+        let x2:f64 = ((-1.0 * self.b) - under_root)/(2.0*self.a);
+        let ans1:Point = Point {x: x1, y: self.evaluate(x1),};
+        let ans2:Point = Point {x: x2, y: self.evaluate(x2),};
+        return vec![ans1, ans2];
+      }
+    }
+  }
 }
 
+/*
+pub fn findIntersectionQuadraticSF(eq_one:QuadraticStandardForm, eq_two: QuadraticStandardForm) -> Vec<Point> {
+  let added_eq:QuadraticStandardForm = QuadraticStandardForm {
+    a: eq_one.a - eq_two.a,
+    b: eq_one.b - eq_two.b,
+    c: eq_one.c - eq_two.c,
+  };
+
+}*/
