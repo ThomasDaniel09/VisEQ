@@ -72,8 +72,8 @@ impl QuadraticStandardForm {
     if self.a == 0.0 { panic!(); } else {
       let under_root:f64 = self.b *self.b - (4.0 * self.a * self.c);
       if under_root < 0.0 {panic!();} else {
-        let x1:f64 = ((-1.0 * self.b) + under_root)/(2.0*self.a);
-        let x2:f64 = ((-1.0 * self.b) - under_root)/(2.0*self.a);
+        let x1:f64 = ((-1.0 * self.b) + under_root.sqrt())/(2.0*self.a);
+        let x2:f64 = ((-1.0 * self.b) - under_root.sqrt())/(2.0*self.a);
         let ans1:Point = Point {x: x1, y: self.evaluate(x1),};
         let ans2:Point = Point {x: x2, y: self.evaluate(x2),};
         return vec![ans1, ans2];
@@ -81,13 +81,3 @@ impl QuadraticStandardForm {
     }
   }
 }
-
-/*
-pub fn findIntersectionQuadraticSF(eq_one:QuadraticStandardForm, eq_two: QuadraticStandardForm) -> Vec<Point> {
-  let added_eq:QuadraticStandardForm = QuadraticStandardForm {
-    a: eq_one.a - eq_two.a,
-    b: eq_one.b - eq_two.b,
-    c: eq_one.c - eq_two.c,
-  };
-
-}*/
