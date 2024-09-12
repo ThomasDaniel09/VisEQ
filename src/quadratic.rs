@@ -1,4 +1,7 @@
-use crate::lib::*; //https://www.cuemath.com/algebra/standard-form-to-vertex-form/
+use std::ptr::eq;
+
+use crate::lib::*;
+use crate::linear::*;
 
 pub struct QuadraticStandardForm { //y = ax^2 + bx + c
   pub a: f64,
@@ -42,6 +45,18 @@ impl QuadraticVertexForm {
 }
 
 impl QuadraticStandardForm {
+  pub fn createTable(&self, granularity:f64, range: Vec<f64>) -> Vec<Point> { //Potential infinite loop
+    let mut i:f64 = range[0];
+    let mut points:Vec<Point> = vec![];
+    while i <= range[1] {
+      points.push(Point{
+        x: i,
+        y: self.a*(i as f64 * i as f64) + self.b * i as f64 + self.c,
+      });
+      i += granularity;
+    }
+    return points;
+  }
   pub fn logSelf(&self) {
     print!("y = ");
     print!("{}", self.a);
@@ -80,4 +95,26 @@ impl QuadraticStandardForm {
       }
     }
   }
+}
+pub fn linearToQD(eq_in: &LinearSlopeInterceptForm) -> QuadraticStandardForm {
+  return QuadraticStandardForm {
+    a: 0.0,
+    b: eq_in.m,
+    c: eq_in.b,
+  };
+}
+pub fn findIntersectionQuadraticSF(eqa:&QuadraticStandardForm, eqb: &QuadraticStandardForm) -> Vec<Point> {
+  let eqc = QuadraticStandardForm {
+    a: eqa.a - eqb.a,
+    b: eqa.b - eqb.b,
+    c: eqa.c - eqb.c,
+  };
+  let roots_of_added_eq = eqc.findRoots();
+  return vec![ Point {
+    x: roots_of_added_eq[0].x,
+    y: eqa.evaluate(roots_of_added_eq[0].x),
+  }, Point {
+    x: roots_of_added_eq[1].x,
+    y: eqa.evaluate(roots_of_added_eq[1].x),
+  }];
 }
